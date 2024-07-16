@@ -36,16 +36,30 @@ def add_post():
 @app.route('/api/posts/<int:post_id>', methods=['DELETE'])
 def delete_post(post_id):
     global POSTS
-    # Намиране на поста с даденото id
     post = next((post for post in POSTS if post['id'] == post_id), None)
 
     if post is None:
         return jsonify({"error": "Post not found"}), 404
 
-    # Изтриване на поста
     POSTS = [post for post in POSTS if post['id'] != post_id]
 
     return jsonify({"message": f"Post with id {post_id} has been deleted successfully."}), 200
+
+
+@app.route('/api/posts/<int:post_id>', methods=['PUT'])
+def update_post(post_id):
+    data = request.get_json()
+    post = next((post for post in POSTS if post['id'] == post_id), None)
+
+    if post is None:
+        return jsonify({"error": "Post not found"}), 404
+
+    if 'title' in data:
+        post['title'] = data['title']
+    if 'content' in data:
+        post['content'] = data['content']
+
+    return jsonify(post), 200
 
 
 if __name__ == '__main__':
