@@ -19,14 +19,15 @@
         }
       },
       "post": {
-        "summary": "Create a new post",
+        "summary": "Creates a new post",
         "consumes": ["application/json"],
+        "produces": ["application/json"],
         "tags": ["Post"],
         "parameters": [
           {
             "name": "post",
             "in": "body",
-            "description": "Post object to be added",
+            "description": "Post object that needs to be added",
             "required": true,
             "schema": {
               "$ref": "#/definitions/Post"
@@ -36,49 +37,29 @@
         "responses": {
           "201": {
             "description": "Post created"
-          },
-          "400": {
-            "description": "Invalid input"
           }
         }
       }
     },
     "/api/posts/{post_id}": {
-      "get": {
-        "summary": "Get a post by ID",
-        "tags": ["Post"],
-        "parameters": [
-          {
-            "name": "post_id",
-            "in": "path",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation"
-          },
-          "404": {
-            "description": "Post not found"
-          }
-        }
-      },
       "put": {
-        "summary": "Update an existing post",
+        "summary": "Updates an existing post",
         "consumes": ["application/json"],
+        "produces": ["application/json"],
         "tags": ["Post"],
         "parameters": [
           {
             "name": "post_id",
             "in": "path",
             "required": true,
-            "type": "integer"
+            "type": "integer",
+            "format": "int64"
           },
           {
             "name": "post",
             "in": "body",
-            "description": "Post object with updated values",
+            "description": "Post object that needs to be updated",
+            "required": true,
             "schema": {
               "$ref": "#/definitions/Post"
             }
@@ -87,56 +68,24 @@
         "responses": {
           "200": {
             "description": "Post updated"
-          },
-          "404": {
-            "description": "Post not found"
           }
         }
       },
       "delete": {
-        "summary": "Delete a post by ID",
+        "summary": "Deletes a post",
         "tags": ["Post"],
         "parameters": [
           {
             "name": "post_id",
             "in": "path",
             "required": true,
-            "type": "integer"
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "responses": {
           "200": {
             "description": "Post deleted"
-          },
-          "404": {
-            "description": "Post not found"
-          }
-        }
-      }
-    },
-    "/api/posts/search": {
-      "get": {
-        "summary": "Search posts by title or content",
-        "tags": ["Post"],
-        "parameters": [
-          {
-            "name": "title",
-            "in": "query",
-            "description": "Search by title",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "content",
-            "in": "query",
-            "description": "Search by content",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation"
           }
         }
       }
@@ -144,20 +93,17 @@
   },
   "definitions": {
     "Post": {
-      "type": "object",
       "required": ["title", "content"],
       "properties": {
         "id": {
           "type": "integer",
-          "example": 1
+          "format": "int64"
         },
         "title": {
-          "type": "string",
-          "example": "First Post"
+          "type": "string"
         },
         "content": {
-          "type": "string",
-          "example": "This is the first post."
+          "type": "string"
         }
       }
     }
