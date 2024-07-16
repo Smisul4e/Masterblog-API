@@ -1,14 +1,25 @@
 from flask import Flask, jsonify, request
+from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)  # Разрешаване на CORS за всички маршрути
 
+# Swagger UI конфигурация
+SWAGGER_URL = "/api/docs"  # URL на Swagger UI
+API_URL = "/static/masterblog.json"  # Път до JSON файла с документация
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={'app_name': "Masterblog API"}
+)
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+
 POSTS = [
     {"id": 1, "title": "First Post", "content": "This is the first post."},
     {"id": 2, "title": "Second Post", "content": "This is the second post."},
 ]
-
 
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
@@ -28,7 +39,6 @@ def get_posts():
 
     return jsonify(sorted_posts)
 
-
 @app.route('/api/posts', methods=['POST'])
 def add_post():
     data = request.get_json()
@@ -46,7 +56,6 @@ def add_post():
 
     return jsonify(new_post), 201
 
-
 @app.route('/api/posts/<int:post_id>', methods=['DELETE'])
 def delete_post(post_id):
     global POSTS
@@ -58,7 +67,6 @@ def delete_post(post_id):
     POSTS = [post for post in POSTS if post['id'] != post_id]
 
     return jsonify({"message": f"Post with id {post_id} has been deleted successfully."}), 200
-
 
 @app.route('/api/posts/<int:post_id>', methods=['PUT'])
 def update_post(post_id):
@@ -75,7 +83,6 @@ def update_post(post_id):
 
     return jsonify(post), 200
 
-
 @app.route('/api/posts/search', methods=['GET'])
 def search_posts():
     title = request.args.get('title')
@@ -84,7 +91,6 @@ def search_posts():
                (title and title.lower() in post['title'].lower()) or
                (content and content.lower() in post['content'].lower())]
     return jsonify(results), 200
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)
